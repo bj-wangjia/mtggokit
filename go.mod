@@ -1,4 +1,4 @@
-module github.com/Mintegral-official/mtggokit
+module github.com/bj-wangjia/mtggokit
 
 go 1.12
 
@@ -7,7 +7,7 @@ require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/panjf2000/ants v1.2.0
 	github.com/pkg/errors v0.8.1
-	github.com/prometheus/client_golang v1.1.0
+	github.com/prometheus/client_golang v1.2.1
 	github.com/sirupsen/logrus v1.4.2
 	github.com/smallnest/rpcx v0.0.0-20191122154842-3a499652de56
 	github.com/smartystreets/assertions v1.0.1

@@ -2,7 +2,7 @@ package streamer
 
 import (
 	"context"
-	"github.com/Mintegral-official/mtggokit/bifrost/container"
+	"github.com/bj-wangjia/mtggokit/bifrost/container"
 )
 
 type Streamer interface {

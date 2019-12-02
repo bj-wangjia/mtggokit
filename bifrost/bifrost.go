@@ -1,9 +1,9 @@
 package bifrost
 
 import (
-	"github.com/Mintegral-official/mtggokit/bifrost/container"
-	"github.com/Mintegral-official/mtggokit/bifrost/log"
-	"github.com/Mintegral-official/mtggokit/bifrost/streamer"
+	"github.com/bj-wangjia/mtggokit/bifrost/container"
+	"github.com/bj-wangjia/mtggokit/bifrost/log"
+	"github.com/bj-wangjia/mtggokit/bifrost/streamer"
 	"github.com/pkg/errors"
 )
 

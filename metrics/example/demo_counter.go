@@ -1,10 +1,9 @@
 package main
 
 import (
-    _ "fmt"
     "time"
-    "./metrics"
     "net/http"
+    "github.com/bj-wangjia/mtggokit/metrics"
     _ "github.com/prometheus/client_golang/prometheus"
     "github.com/prometheus/client_golang/prometheus/promhttp"
 )

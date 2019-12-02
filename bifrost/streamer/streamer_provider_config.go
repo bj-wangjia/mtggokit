@@ -1,6 +1,6 @@
 package streamer
 
-import "github.com/Mintegral-official/mtggokit/bifrost/log"
+import "github.com/bj-wangjia/mtggokit/bifrost/log"
 
 type StreamerProviderCfg struct {
 	Name       string

@@ -2,7 +2,7 @@ package streamer
 
 import (
 	"fmt"
-	"github.com/Mintegral-official/mtggokit/bifrost/container"
+	"github.com/bj-wangjia/mtggokit/bifrost/container"
 	"github.com/pkg/errors"
 	"sync"
 	"time"

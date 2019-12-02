@@ -6,7 +6,7 @@ metrics为监控服务提供了统一的调用接口,主要包括counter,gauge,s
 
 install:
 ```
-go get -v -u github.com/Mintegral-official/mtggokit/metrics/metrics
+go get -v -u github.com/bj-wangjia/mtggokit/metrics/metrics
 ```
 
 
@@ -38,7 +38,7 @@ MonitorSystem:
 ```golang 
 import (
     "time"
-    "github.com/Mintegral-official/mtggokit/metrics"
+    "github.com/bj-wangjia/mtggokit/metrics"
 )
 func main() {
     var logger *log.Logger
@@ -77,7 +77,7 @@ Metrics:
 ```golang 
 import (
     "time"
-    "github.com/Mintegral-official/mtggokit/metrics"
+    "github.com/bj-wangjia/mtggokit/metrics"
 )
 func main() {
     lables := []string{"score"}

@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/Mintegral-official/mtggokit/bifrost/container"
-	"github.com/Mintegral-official/mtggokit/bifrost/streamer"
+	"github.com/bj-wangjia/mtggokit/bifrost/container"
+	"github.com/bj-wangjia/mtggokit/bifrost/streamer"
 	"github.com/sirupsen/logrus"
 	"os"
 	"os/signal"

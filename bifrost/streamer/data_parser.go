@@ -1,7 +1,7 @@
 package streamer
 
 import (
-	"github.com/Mintegral-official/mtggokit/bifrost/container"
+	"github.com/bj-wangjia/mtggokit/bifrost/container"
 )
 
 type ParserResult struct {
