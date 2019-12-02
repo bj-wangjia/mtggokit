@@ -1,0 +1,6 @@
+Prometheus:
+    Default:
+        Namespace: "Demo"
+        Subsystem: "prometheus"
+        Name: "httpRequest"
+        Help: "test"

@@ -2,19 +2,27 @@
 // Individual metrics are mapped to their Prometheus counterparts, and
 // (depending on the constructor used) may be automatically registered in the
 // global Prometheus metrics registry.
-package prometheus
+package metrics
 
 import (
     "github.com/prometheus/client_golang/prometheus"
-
     "github.com/Mintegral-official/mtggokit/metrics/metrics"
-    "github.com/Mintegral-official/mtggokit/metrics/internal/lv"
 )
 
 // Counter implements Counter, via a Prometheus CounterVec.
 type Counter struct {
     cv  *prometheus.CounterVec
-    lvs lv.LabelValues
+}
+
+func NewCounterFromConfig(fileName string, labels []string) Counter {
+    v := setViper(fileName)
+    baseOpts := prometheus.CounterOpts{
+        Namespace: v.GetString("Prometheus.Default.Namespace"),
+        Subsystem: v.GetString("Prometheus.Default.Subsystem"),
+        Name:      v.GetString("Prometheus.Default.Name"),
+        Help:      v.GetString("Prometheus.Default.Help"),
+    }
+    return NewCounterFrom(baseOpts, labels)
 }
 
 // NewCounterFrom constructs and registers a Prometheus CounterVec,
@@ -33,22 +41,32 @@ func NewCounter(cv *prometheus.CounterVec) *Counter {
 }
 
 // With implements Counter.
-func (c *Counter) With(labelValues ...string) metrics.Counter {
+func (c *Counter) With(labels prometheus.Labels) metrics.Counter {
+    c.cv.With(labels)
     return &Counter{
         cv:  c.cv,
-        lvs: c.lvs.With(labelValues...),
     }
 }
 
 // Add implements Counter.
 func (c *Counter) Add(delta float64) {
-    c.cv.With(makeLabels(c.lvs...)).Add(delta)
+    c.cv.Add(delta)
 }
 
 // Gauge implements Gauge, via a Prometheus GaugeVec.
 type Gauge struct {
     gv  *prometheus.GaugeVec
-    lvs lv.LabelValues
+}
+
+func NewGaugeFromConfig(fileName string, labels []string) Gauge {
+    v := setViper(fileName)
+    baseOpts := prometheus.GaugeOpts{
+        Namespace: v.GetString("Prometheus.Default.Namespace"),
+        Subsystem: v.GetString("Prometheus.Default.Subsystem"),
+        Name:      v.GetString("Prometheus.Default.Name"),
+        Help:      v.GetString("Prometheus.Default.Help"),
+    }
+    return NewGaugeFrom(baseOpts, labels)
 }
 
 // NewGaugeFrom construts and registers a Prometheus GaugeVec,
@@ -67,21 +85,21 @@ func NewGauge(gv *prometheus.GaugeVec) *Gauge {
 }
 
 // With implements Gauge.
-func (g *Gauge) With(labelValues ...string) metrics.Gauge {
+func (g *Gauge) With(labels prometheus.Labels) metrics.Gauge {
+    g.gv.With(labels)
     return &Gauge{
         gv:  g.gv,
-        lvs: g.lvs.With(labelValues...),
     }
 }
 
 // Set implements Gauge.
 func (g *Gauge) Set(value float64) {
-    g.gv.With(makeLabels(g.lvs...)).Set(value)
+    g.gv.Set(value)
 }
 
 // Add is supported by Prometheus GaugeVecs.
 func (g *Gauge) Add(delta float64) {
-    g.gv.With(makeLabels(g.lvs...)).Add(delta)
+    g.gv.Add(delta)
 }
 
 // Summary implements Histogram, via a Prometheus SummaryVec. The difference
@@ -89,7 +107,17 @@ func (g *Gauge) Add(delta float64) {
 // quantile buckets, but cannot be statistically aggregated.
 type Summary struct {
     sv  *prometheus.SummaryVec
-    lvs lv.LabelValues
+}
+
+func NewSummaryFromConfig(fileName string, labels []string) Summary {
+    v := setViper(fileName)
+    baseOpts := prometheus.SummaryOpts{
+        Namespace: v.GetString("Prometheus.Default.Namespace"),
+        Subsystem: v.GetString("Prometheus.Default.Subsystem"),
+        Name:      v.GetString("Prometheus.Default.Name"),
+        Help:      v.GetString("Prometheus.Default.Help"),
+    }
+    return NewSummaryFrom(baseOpts, labels)
 }
 
 // NewSummaryFrom constructs and registers a Prometheus SummaryVec,
@@ -108,16 +136,16 @@ func NewSummary(sv *prometheus.SummaryVec) *Summary {
 }
 
 // With implements Histogram.
-func (s *Summary) With(labelValues ...string) metrics.Histogram {
+func (s *Summary) With(labels prometheus.Labels) metrics.Histogram {
+    s.sv.With(labels)
     return &Summary{
         sv:  s.sv,
-        lvs: s.lvs.With(labelValues...),
     }
 }
 
 // Observe implements Histogram.
 func (s *Summary) Observe(value float64) {
-    s.sv.With(makeLabels(s.lvs...)).Observe(value)
+    s.sv.Observe(value)
 }
 
 // Histogram implements Histogram via a Prometheus HistogramVec. The difference
@@ -125,7 +153,6 @@ func (s *Summary) Observe(value float64) {
 // quantile buckets, and can be statistically aggregated.
 type Histogram struct {
     hv  *prometheus.HistogramVec
-    lvs lv.LabelValues
 }
 
 // NewHistogramFrom constructs and registers a Prometheus HistogramVec,
@@ -144,22 +171,31 @@ func NewHistogram(hv *prometheus.HistogramVec) *Histogram {
 }
 
 // With implements Histogram.
-func (h *Histogram) With(labelValues ...string) metrics.Histogram {
+func (h *Histogram) With(labels prometheus.Labels) metrics.Histogram {
+    h.hv.With(labels)
     return &Histogram{
         hv:  h.hv,
-        lvs: h.lvs.With(labelValues...),
     }
 }
 
 // Observe implements Histogram.
 func (h *Histogram) Observe(value float64) {
-    h.hv.With(makeLabels(h.lvs...)).Observe(value)
+    h.hv.Observe(value)
 }
 
-func makeLabels(labelValues ...string) prometheus.Labels {
-    labels := prometheus.Labels{}
-    for i := 0; i < len(labelValues); i += 2 {
-        labels[labelValues[i]] = labelValues[i+1]
+func setViper(fileName string) *viper.Viper {
+    configPath, configName := filepath.Split(fileName)
+    dotIndex := strings.LastIndex(configName, ".")
+    if dotIndex == -1 || configName[dotIndex:] != ".yaml" {
+        panic("config file format must be yaml")
     }
-    return labels
+    v := viper.New()
+    v.AddConfigPath(configPath)
+    v.SetConfigName(configName[:dotIndex])
+    v.SetConfigType("yaml")
+    if err := v.ReadInConfig(); err != nil {
+        panic(err)
+    }
+    return v
 }
+
