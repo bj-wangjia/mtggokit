@@ -6,14 +6,14 @@ import (
 // Counter describes a metric that accumulates values monotonically.
 // An example of a counter is the number of received HTTP requests.
 type Counter interface {
-    With(lables prometheus.Lables) Counter
+    With(lables prometheus.Labels) Counter
     Add(delta float64)
 }
 
 // Gauge describes a metric that takes specific values over time.
 // An example of a gauge is the current depth of a job queue.
 type Gauge interface {
-    With(lables prometheus.Lables) Gauge
+    With(lables prometheus.Labels) Gauge
     Set(value float64)
     Add(delta float64)
 }
@@ -23,6 +23,6 @@ type Gauge interface {
 // typically expressed as quantiles or buckets. An example of a histogram is
 // HTTP request latencies.
 type Histogram interface {
-    With(lables prometheus.Lables) Histogram
+    With(lables prometheus.Labels) Histogram
     Observe(value float64)
 }

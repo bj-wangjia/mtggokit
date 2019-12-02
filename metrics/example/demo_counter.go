@@ -1,11 +1,11 @@
 package main
 
 import (
-    "fmt"
+    _ "fmt"
     "time"
+    "./metrics"
     "net/http"
-    "github.com/bj-wangjia/mtggokit/metrics"
-    "github.com/prometheus/client_golang/prometheus"
+    _ "github.com/prometheus/client_golang/prometheus"
     "github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
@@ -18,7 +18,7 @@ func main() {
 func count() {
     Dimension := []string{"method", "code", "msg"}
     counter := metrics.NewCounterFromConfig("./demo_counter.yaml", Dimension)
-    labels := prometheus.Labels{}
+    labels := make(map[string]string, len(Dimension))
     labels["method"] = "Get"
     labels["code"] = "200"
     labels["msg"] = "succ"
